@@ -20,31 +20,28 @@ void Input::begin() {
     pinMode(buttonPin, INPUT_PULLUP);
     pinMode(knobPin, INPUT);
     pinMode(lightPin, INPUT);
-
     state = {};
     filteredKnob = analogRead(knobPin);
     filteredLight = analogRead(lightPin);
 }
 
-// for debounce
 bool Input::readButton() {
     bool currentRaw = digitalRead(buttonPin);
     if (currentRaw != lastRawButton) {
         lastDebounceTime = millis();
     }
     lastRawButton = currentRaw;
-
     if ((millis() - lastDebounceTime) > DEBOUNCE_MS) {
         return (currentRaw == LOW);
     }
-    return (btnState != IDLE && btnState != LONG && btnState != LONGLONG); // держим прежнее состояние при дребезге
+    return (btnState != IDLE && btnState != LONG);
 }
 
 void Input::update() {
     state.buttonClick = false;
     state.buttonDoubleClick = false;
+    state.buttonTripleClick = false;
     state.buttonLongPress = false;
-    state.buttonLongLongPress = false;
     state.buttonPressed = false;
 
     bool current = readButton();
@@ -56,8 +53,9 @@ void Input::update() {
                 btnState = PRESS;
                 pressStartTime = now;
             } else if (clickCount > 0 && (now - lastClickTime) >= DOUBLECLICK_MS) {
-                if (clickCount == 1) state.buttonClick = true;
-                else if (clickCount >= 2) state.buttonDoubleClick = true;
+                if (clickCount == 1)      state.buttonClick = true;
+                else if (clickCount == 2) state.buttonDoubleClick = true;
+                else if (clickCount >= 3) state.buttonTripleClick = true;
                 clickCount = 0;
             }
             break;
@@ -69,23 +67,13 @@ void Input::update() {
                     lastClickTime = now;
                 }
                 btnState = IDLE;
-            } else if ((now - pressStartTime) >= LONGPRESS_MS && (now - pressStartTime) < LONGLONGPRESS_MS) {
+            } else if ((now - pressStartTime) >= LONGPRESS_MS) {
                 btnState = LONG;
                 state.buttonLongPress = true;
             }
             break;
 
         case LONG:
-            if (!current) {
-                btnState = IDLE;
-            } else if ((now - pressStartTime) >= LONGLONGPRESS_MS) {
-                btnState = LONGLONG;
-                state.buttonLongPress = false;
-                state.buttonLongLongPress = true;
-            }
-            break;
-
-        case LONGLONG:
             if (!current) {
                 btnState = IDLE;
             }

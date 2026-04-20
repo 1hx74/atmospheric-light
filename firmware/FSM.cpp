@@ -47,13 +47,13 @@ void FSM::update() {
                 nowEffect = effectSequence.prev();
                 nowEffect->begin(leds, numLeds);
             } 
-            else if (state->buttonLongPress) {
-                // todo -> add/rm fav.
-            }
-            else if (state->buttonLongLongPress) {
+            else if (state->buttonTripleClick) {
                 demoLastSwitch = millis();
                 setState(DEMO);
                 toShowUI[static_cast<int>(UIAnimation::DEMO_EFFECT)] += 1;
+            }
+            else if (state->buttonLongPress) {
+                // todo -> add/rm fav.
             }
 
             nowEffect->update(knobValue);

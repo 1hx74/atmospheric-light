@@ -8,6 +8,6 @@ struct InputState {
   bool buttonPressed;
   bool buttonClick;
   bool buttonDoubleClick;
+  bool buttonTripleClick;
   bool buttonLongPress;
-  bool buttonLongLongPress;
 };

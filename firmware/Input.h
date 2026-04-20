@@ -2,8 +2,7 @@
 #include <Arduino.h>
 #include "InputState.h"
 
-#define LONGPRESS_MS       1000
-#define LONGLONGPRESS_MS   3000
+#define LONGPRESS_MS       2000
 #define DOUBLECLICK_MS     400
 #define FILTER_ALPHA       0.4f
 #define DEBOUNCE_MS 30
@@ -12,7 +11,6 @@ enum ButtonState {
     IDLE,
     PRESS,
     LONG,
-    LONGLONG,
     RELEASE,
     CLICK_CHECK
 };
