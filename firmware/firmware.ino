@@ -3,6 +3,7 @@
 #include "Input.h"
 #include "EffectSequence.h"
 #include "FSM.h"
+#include "UI.h"
 
 #define DAY_BRIGHTNESS    100
 #define NIGHT_BRIGHTNESS  100
@@ -22,7 +23,11 @@ Input input(&nowState, P_BUTTON, P_KNOB, P_LIGHT);
 EffectSequence effectSequence;
 Effect* nowEffect = nullptr;
 
-FSM fsm(&nowState, effectSequence, nowEffect, leds, NUM_LEDS);
+uint8_t toShowUI[ANIM_COUNT] = {0};
+
+FSM fsm(&nowState, effectSequence, nowEffect, leds, NUM_LEDS, toShowUI);
+
+UI ui(leds, NUM_LEDS, toShowUI);
 
 void setup() {
   input.begin();
@@ -36,6 +41,8 @@ void loop() {
   input.update();
 
   fsm.update();
+
+  ui.update();
   
   FastLED.show();
 }

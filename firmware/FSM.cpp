@@ -1,12 +1,14 @@
 #include "FSM.h"
+#include "UI.h"
 
-FSM::FSM(InputState* state, EffectSequence& effectSequence, Effect*& nowEffect, CRGB* leds, uint16_t NUM_LEDS)
-    : fsmState(FSMState::LOAD),
+FSM::FSM(InputState* state, EffectSequence& effectSequence, Effect*& nowEffect, CRGB* leds, uint16_t NUM_LEDS, uint8_t* toShowUI)
+    : fsmState(LOAD),
       state(state),
       effectSequence(effectSequence),
       nowEffect(nowEffect),
       leds(leds),
-      numLeds(NUM_LEDS)
+      numLeds(NUM_LEDS),
+      toShowUI(toShowUI)
 {}
 
 FSMState FSM::getState() const {
@@ -24,18 +26,19 @@ void FSM::update() {
 
     switch (fsmState) {
 
-        case FSMState::LOAD:
+        case LOAD:
             // todo begin anim. and block click
             nowEffect = effectSequence.current();
             nowEffect->begin(leds, numLeds);
-            setState(FSMState::MANUAL);
+            toShowUI[static_cast<int>(UIAnimation::LOAD_EFFECT)] += 1;
+            setState(MANUAL);
             break;
 
-        case FSMState::AUTO:
+        case AUTO:
             // todo auto
             break;
 
-        case FSMState::MANUAL:
+        case MANUAL:
             if (state->buttonClick) {
                 nowEffect = effectSequence.next();
                 nowEffect->begin(leds, numLeds);
@@ -49,17 +52,19 @@ void FSM::update() {
             }
             else if (state->buttonLongLongPress) {
                 demoLastSwitch = millis();
-                setState(FSMState::DEMO);
+                setState(DEMO);
+                toShowUI[static_cast<int>(UIAnimation::DEMO_EFFECT)] += 1;
             }
 
             nowEffect->update(knobValue);
             break;
 
-        case FSMState::DEMO: 
+        case DEMO: 
             unsigned long now = millis();
 
             if (state->buttonClick || state->buttonDoubleClick) {
-                setState(FSMState::MANUAL);
+                setState(MANUAL);
+                toShowUI[static_cast<int>(UIAnimation::MANUAL_EFFECT)] += 1;
                 break;
             }
 

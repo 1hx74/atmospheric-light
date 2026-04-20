@@ -5,7 +5,7 @@
 
 #define DEMO_INTERVAL   30000
 
-enum class FSMState {
+enum FSMState {
     LOAD,
     AUTO,
     MANUAL,
@@ -14,7 +14,7 @@ enum class FSMState {
 
 class FSM {
 public:
-    FSM(InputState* state, EffectSequence& seq, Effect*& currentEffect, CRGB* leds, uint16_t numLeds);
+    FSM(InputState* state, EffectSequence& seq, Effect*& currentEffect, CRGB* leds, uint16_t numLeds, uint8_t* toShowUI);
 
     void update();
     FSMState getState() const;
@@ -28,6 +28,7 @@ private:
     Effect*& nowEffect;
     CRGB* leds;
     uint16_t numLeds;
+    uint8_t* toShowUI;
 
     unsigned long demoLastSwitch = 0;
 };
