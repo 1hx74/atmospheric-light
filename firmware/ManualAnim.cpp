@@ -1,25 +1,28 @@
 #pragma once
-#include <Arduino.h>
-#include <FastLED.h>
 #include "StaffEffect.h"
 
 class ManualAnim : public StaffEffect {
-private:
-    CRGB* leds;
-    int num_leds;
-
 public:
-    void begin(CRGB* _leds, int _num_leds) override {
-        leds = _leds;
-        num_leds = _num_leds;
+    unsigned long getTime() override {
+        return 1400;
     }
 
-    void update(uint16_t value) override {
-        for (int i = 0; i < num_leds; i++) {
-            leds[i] = CRGB::Red;
+protected:
+
+    unsigned long start = 0;
+
+    void onBegin() override {
+        start = millis();
+    }
+
+    void processing(State &stateRef, CRGB* arr) override {
+
+        if (millis() >= start + 1000) {
+            stateRef = END;
         }
-        FastLED.show();
-    }
 
-    unsigned long getTime() { return 1000; }
+        for (int i = 0; i < num_leds; i++) {
+            arr[i] = CRGB::Red;
+        }
+    }
 };

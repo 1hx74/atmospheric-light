@@ -16,15 +16,14 @@ public:
         if (!leds) return;
 
         unsigned long now = millis();
-        uint16_t speed = map(value, 0, 1023, 100, 2000); // speed
+        uint16_t speed = map(value, 0, 1023, 100, 2000);
 
-        if (now - lastMillis < speed) return;
-        lastMillis = now;
-
-        state = !state;
+        if (now - lastMillis >= speed) {
+            lastMillis = now;
+            state = !state;
+        }
 
         CRGB red    = CRGB(255, 0, 0);
-        //CRGB orange = CRGB(255, 120, 0);
         CRGB orange = CRGB(255, 60, 10);
 
         for (int i = 0; i < numLeds; i++) {

@@ -37,7 +37,7 @@ void UI::update() {
             startShow = millis();
             nowEffect = anim[idx];
             endShow = nowEffect->getTime();
-            nowEffect->begin(leds, numLeds);
+            nowEffect->begin(leds, numLeds, FastLED.getBrightness());
             break;
         }
     }
